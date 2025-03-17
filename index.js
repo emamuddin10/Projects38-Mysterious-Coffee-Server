@@ -51,12 +51,40 @@ async function run() {
       const result = await cursor.toArray()
       res.send(result)
     })
+    // get api for update 
+    app.get('/coffee/:id',async(req,res)=>{
+      const id = req.params.id 
+      const query = {_id: new ObjectId(id)}
+      const result = await coffeeCollection.findOne(query)
+      res.send(result)
+    })
 
     // post 
     app.post('/coffee', async(req,res)=>{
       const newCoffee= req.body
       console.log(newCoffee)
       const result = await coffeeCollection.insertOne(newCoffee)
+      res.send(result)
+    })
+
+    // put 
+    app.put('/coffee/:id',async(req,res)=>{
+      const updatedCoffee = req.body 
+      const id = req.params.id 
+      const filter = {_id: new ObjectId(id)}
+      const options = { upsert: true };
+      const coffee = {
+        $set:{
+          name:updatedCoffee.name,
+          chef:updatedCoffee.chef,
+          category:updatedCoffee.category,
+          quantity:updatedCoffee.quantity,
+          teste:updatedCoffee.teste,
+          details:updatedCoffee.details,
+          photo:updatedCoffee.photo
+        }
+      }
+      const result = await coffeeCollection.updateOne(filter,coffee,options)
       res.send(result)
     })
 
